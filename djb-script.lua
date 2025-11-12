@@ -245,11 +245,15 @@ about:Toggle("玩家透视","Toggle",false,function(Value)
     end
 end)
 
-local about = UITab5:section("『甩飞』",true)  -- 分类内功能分类
+local about = UITab5:section("『甩飞（不要当厨神）』",true)  -- 分类内功能分类
 
-local about = UITab5:section("『黑洞』",true)
+local about = UITab5:section("『黑洞（不要当厨神）』",true)
 about:Button("黑洞英文",function()
     loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-BLACK-HOLE-30646"))()
+end)
+
+about:Button("吸附到自己身上的黑洞",function()
+    loadstring(game:HttpGet("https://pastefy.app/pYhER1z4/raw"))()
 end)
 
 local about = UITab6:section("『妲己吧分支』",true)
