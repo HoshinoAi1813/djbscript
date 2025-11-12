@@ -1,0 +1,471 @@
+if game.GameId == 2440500124 then
+    -- 加载WindUI库
+    local WindUI = loadstring(game:HttpGet("https://pastebin.com/raw/qYYUTE4g"))()
+
+    local EntityModules = game:GetService("ReplicatedStorage").ModulesClient.EntityModules
+    local gameData = game.ReplicatedStorage:WaitForChild("GameData")
+    local floor = gameData:WaitForChild("Floor")
+    local isMines = floor.Value == "Mines"
+    local isHotel = floor.Value == "Hotel"
+    local isBackdoor = floor.Value == "Backdoor"
+    local isGarden = floor.Value == "Garden"
+
+    -- 初始化通知
+    game:GetService("StarterGui"):SetCore("SendNotification",{
+        Title = "妲己吧Doors",
+        Text = "正在加载...",
+        Icon = "rbxassetid://119970903874014"
+    })
+
+    -- 距离计算函数
+    function Distance(pos)
+        if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            return (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - pos).Magnitude
+        end
+        return math.huge
+    end
+
+    -- 设置WindUI
+    WindUI.TransparencyValue = 0.2
+    WindUI:SetTheme("Dark")
+
+    -- 创建主窗口
+    local Window = WindUI:CreateWindow({
+        Title = ((isHotel and "妲己吧 | 酒店") or (isMines and "Rb脚本中心 | 矿井") or (isBackdoor and "Rb脚本中心 | 后门") or "Rb脚本中心 | Doors"),
+        Icon = "rbxassetid://105933835532108",
+        Author = "妲己吧Doors",
+        Folder = "妲己吧脚本",
+        Size = UDim2.fromOffset(480, 360),
+        Theme = "Dark",
+        User = {
+            Enabled = true,
+            Anonymous = false,
+            Callback = function()
+                WindUI:Notify({
+                    Title = "用户信息",
+                    Content = "用户ID: " .. game.Players.LocalPlayer.UserId,
+                    Duration = 3
+                })
+            end
+        },
+        SideBarWidth = 220,
+        HideSearchBar = false,
+        ScrollBarEnabled = true
+    })
+
+    Window:Tag({
+        Title = "v1.0.0",
+        Color = Color3.fromHex("#30ff6a")
+    })
+
+    -- 创建标签页
+    local Tabs = {
+        Player = Window:Section({ Title = "玩家功能", Opened = true }),
+        Visual = Window:Section({ Title = "视觉功能", Opened = true }),
+        Auto = Window:Section({ Title = "自动功能", Opened = true }),
+        Protection = Window:Section({ Title = "防护功能", Opened = true }),
+        ESP = Window:Section({ Title = "透视功能", Opened = true })
+    }
+
+    local TabHandles = {
+        PlayerTab = Tabs.Player:Tab({ Title = "玩家设置", Icon = "user" }),
+        VisualTab = Tabs.Visual:Tab({ Title = "视觉增强", Icon = "eye" }),
+        AutoTab = Tabs.Auto:Tab({ Title = "自动互动", Icon = "zap" }),
+        ProtectionTab = Tabs.Protection:Tab({ Title = "实体防护", Icon = "shield" }),
+        ESPTab = Tabs.ESP:Tab({ Title = "物品透视", Icon = "layout-grid" })
+    }
+
+    -- 玩家功能
+    local speedValue = 16
+    local speedEnabled = false
+
+    TabHandles.PlayerTab:Slider({
+        Title = "移动速度",
+        Desc = "调整玩家移动速度",
+        Value = { Min = 16, Max = 100, Default = 16 },
+        Callback = function(value)
+            speedValue = value
+            if speedEnabled and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+                game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+            end
+        end
+    })
+
+    TabHandles.PlayerTab:Toggle({
+        Title = "启用速度",
+        Desc = "开启自定义移动速度",
+        Value = false,
+        Callback = function(value)
+            speedEnabled = value
+            if value then
+                while speedEnabled do
+                    if game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+                        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = speedValue
+                    end
+                    task.wait()
+                end
+            else
+                if game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+                    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+                end
+            end
+            WindUI:Notify({
+                Title = "速度设置",
+                Content = value and "已开启速度" or "已关闭速度",
+                Icon = value and "check" or "x",
+                Duration = 2
+            })
+        end
+    })
+
+    TabHandles.PlayerTab:Slider({
+        Title = "跳跃高度",
+        Desc = "调整玩家跳跃高度",
+        Value = { Min = 50, Max = 200, Default = 50 },
+        Callback = function(value)
+            if game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+                game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
+            end
+        end
+    })
+
+    TabHandles.PlayerTab:Divider()
+
+    -- 夜视功能
+    TabHandles.PlayerTab:Toggle({
+        Title = "夜视模式",
+        Desc = "提高游戏亮度",
+        Value = false,
+        Callback = function(state)
+            if state then
+                game.Lighting.Ambient = Color3.new(1, 1, 1)
+            else
+                game.Lighting.Ambient = Color3.new(0, 0, 0)
+            end
+            WindUI:Notify({
+                Title = "夜视模式",
+                Content = state and "已开启" or "已关闭",
+                Icon = state and "check" or "x",
+                Duration = 2
+            })
+        end
+    })
+
+    -- 视觉功能
+    TabHandles.VisualTab:Toggle({
+        Title = "全图高亮",
+        Desc = "提高整体亮度",
+        Value = false,
+        Callback = function(value)
+            _G.FullBright = value
+            local oldSettings = {
+                Brightness = game.Lighting.Brightness,
+                ClockTime = game.Lighting.ClockTime,
+                FogEnd = game.Lighting.FogEnd,
+                GlobalShadows = game.Lighting.GlobalShadows,
+                OutdoorAmbient = game.Lighting.OutdoorAmbient
+            }
+            
+            while _G.FullBright do
+                game.Lighting.Brightness = 2
+                game.Lighting.ClockTime = 14
+                game.Lighting.FogEnd = 100000
+                game.Lighting.GlobalShadows = false
+                game.Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+                task.wait()
+            end
+            
+            -- 恢复原设置
+            for setting, value in pairs(oldSettings) do
+                game.Lighting[setting] = value
+            end
+        end
+    })
+
+    TabHandles.VisualTab:Toggle({
+        Title = "去雾效果",
+        Desc = "移除地图雾气",
+        Value = false,
+        Callback = function(value)
+            _G.Nofog = value
+            while _G.Nofog do
+                game.Lighting.FogStart = 100000
+                game.Lighting.FogEnd = 200000
+                for _, v in pairs(game.Lighting:GetChildren()) do
+                    if v.ClassName == "Atmosphere" then
+                        v.Density = 0
+                        v.Haze = 0
+                    end
+                end
+                task.wait()
+            end
+            game.Lighting.FogStart = 0
+            game.Lighting.FogEnd = 1000
+            for _, v in pairs(game.Lighting:GetChildren()) do
+                if v.ClassName == "Atmosphere" then
+                    v.Density = 0.3
+                    v.Haze = 1
+                end
+            end
+        end
+    })
+
+    -- 自动功能
+    local keyRange = 15
+    local leverRange = 15
+    local bookRange = 15
+
+    TabHandles.AutoTab:Slider({
+        Title = "自动捡钥匙距离",
+        Value = { Min = 0, Max = 30, Default = 15 },
+        Callback = function(val)
+            keyRange = val
+        end
+    })
+
+    TabHandles.AutoTab:Slider({
+        Title = "自动拉拉杆距离",
+        Value = { Min = 0, Max = 30, Default = 15 },
+        Callback = function(val)
+            leverRange = val
+        end
+    })
+
+    TabHandles.AutoTab:Slider({
+        Title = "自动拾书距离",
+        Value = { Min = 0, Max = 30, Default = 15 },
+        Callback = function(val)
+            bookRange = val
+        end
+    })
+
+    TabHandles.AutoTab:Toggle({
+        Title = "自动捡钥匙",
+        Value = false,
+        Callback = function(val)
+            local pickupaura = val
+            if val then
+                task.spawn(function()
+                    while pickupaura do
+                        pcall(function()
+                            for _,v in pairs(workspace:GetDescendants()) do
+                                if v.Name:find("KeyObtain") and v:IsA("ProximityPrompt") then
+                                    local mag = Distance(v.Parent.Hitbox.Position)
+                                    if mag < keyRange then
+                                        fireproximityprompt(v)
+                                    end
+                                end
+                            end
+                        end)
+                        task.wait(0.5)
+                    end
+                end)
+            end
+        end
+    })
+
+    TabHandles.AutoTab:Toggle({
+        Title = "自动拉拉杆",
+        Value = false,
+        Callback = function(val)
+            local leveraura = val
+            if val then
+                task.spawn(function()
+                    while leveraura do
+                        pcall(function()
+                            for _,v in pairs(workspace:GetDescendants()) do
+                                if v.Name:find("LeverForGate") and v:IsA("ProximityPrompt") then
+                                    local mag = Distance(v.Parent.Main.Position)
+                                    if mag < leverRange then
+                                        fireproximityprompt(v)
+                                    end
+                                end
+                            end
+                        end)
+                        task.wait(0.5)
+                    end
+                end)
+            end
+        end
+    })
+
+    TabHandles.AutoTab:Toggle({
+        Title = "即时互动",
+        Desc = "去除所有交互延迟",
+        Value = false,
+        Callback = function(value)
+            _G.NoCooldownProximity = value
+            if value then
+                for i, v in pairs(workspace:GetDescendants()) do
+                    if v:IsA("ProximityPrompt") then
+                        v.HoldDuration = 0
+                    end
+                end
+            end
+        end
+    })
+
+    -- 防护功能
+    TabHandles.ProtectionTab:Toggle({
+        Title = "防Screech",
+        Desc = "防止Screech攻击",
+        Value = false,
+        Callback = function(value)
+            _G.AntiScreech = value
+            if value then
+                workspace.DescendantAdded:Connect(function(v)
+                    if v:IsA("Model") and v.Name == "Screech" then
+                        v:Destroy()
+                    end
+                end)
+            end
+        end
+    })
+
+    TabHandles.ProtectionTab:Toggle({
+        Title = "防Halt",
+        Desc = "防止Halt攻击",
+        Value = false,
+        Callback = function(value)
+            _G.NoHalt = value
+            local HaltShade = EntityModules:FindFirstChild("Shade") or EntityModules:FindFirstChild("_Shade")
+            if HaltShade then
+                HaltShade.Name = _G.NoHalt and "_Shade" or "Shade"
+            end
+        end
+    })
+
+    TabHandles.ProtectionTab:Toggle({
+        Title = "防Eyes",
+        Desc = "防止Eyes攻击",
+        Value = false,
+        Callback = function(value)
+            _G.NoEyes = value
+            if value then
+                task.spawn(function()
+                    while _G.NoEyes do
+                        if workspace:FindFirstChild("Eyes") or workspace:FindFirstChild("BackdoorLookman") then
+                            if game.ReplicatedStorage:FindFirstChild("RemotesFolder") then
+                                game.ReplicatedStorage.RemotesFolder.MotorReplication:FireServer(-649)
+                            end
+                        end
+                        task.wait(0.1)
+                    end
+                end)
+            end
+        end
+    })
+
+    -- 透视功能
+    TabHandles.ESPTab:Toggle({
+        Title = "钥匙/拉杆透视",
+        Desc = "显示钥匙和拉杆位置",
+        Value = false,
+        Callback = function(value)
+            _G.EspKey = value
+            if not value then
+                -- 清理ESP
+                for _, v in pairs(workspace:GetDescendants()) do
+                    if v.Name:find("Key") or v.Name == "LeverForGate" then
+                        for _, z in pairs(v:GetChildren()) do
+                            if z.Name:find("Esp_") then
+                                z:Destroy()
+                            end
+                        end
+                    end
+                end
+            else
+                -- 创建ESP
+                task.spawn(function()
+                    while _G.EspKey do
+                        pcall(function()
+                            for _, v in pairs(workspace:GetDescendants()) do
+                                if (v.Name:find("Key") and v:FindFirstChild("Hitbox")) or 
+                                   (v.Name == "LeverForGate" and v.PrimaryPart) then
+                                    
+                                    if not v:FindFirstChild("Esp_Highlight") then
+                                        local Highlight = Instance.new("Highlight")
+                                        Highlight.Name = "Esp_Highlight"
+                                        Highlight.FillColor = Color3.fromRGB(0, 0, 255)
+                                        Highlight.OutlineColor = Color3.fromRGB(0, 0, 255)
+                                        Highlight.FillTransparency = 0.5
+                                        Highlight.OutlineTransparency = 0
+                                        Highlight.Adornee = v
+                                        Highlight.Parent = v
+                                    end
+                                end
+                            end
+                        end)
+                        task.wait(1)
+                    end
+                end)
+            end
+        end
+    })
+
+    TabHandles.ESPTab:Toggle({
+        Title = "门透视",
+        Desc = "显示所有门的位置",
+        Value = false,
+        Callback = function(value)
+            _G.EspDoor = value
+            if not value then
+                for _, v in pairs(workspace.CurrentRooms:GetDescendants()) do
+                    if v:IsA("Model") then
+                        for _, z in pairs(v:GetChildren()) do
+                            if z.Name:find("Esp_") then
+                                z:Destroy()
+                            end
+                        end
+                    end
+                end
+            else
+                task.spawn(function()
+                    while _G.EspDoor do
+                        pcall(function()
+                            for _, v in pairs(workspace.CurrentRooms:GetChildren()) do
+                                if v:IsA("Model") and v:FindFirstChild("Door") and v.Door:FindFirstChild("Door") then
+                                    if not v:FindFirstChild("Esp_Highlight") then
+                                        local Highlight = Instance.new("Highlight")
+                                        Highlight.Name = "Esp_Highlight"
+                                        Highlight.FillColor = Color3.fromRGB(0, 255, 0)
+                                        Highlight.OutlineColor = Color3.fromRGB(0, 255, 0)
+                                        Highlight.FillTransparency = 0.5
+                                        Highlight.OutlineTransparency = 0
+                                        Highlight.Adornee = v.Door
+                                        Highlight.Parent = v
+                                    end
+                                end
+                            end
+                        end)
+                        task.wait(1)
+                    end
+                end)
+            end
+        end
+    })
+
+    -- 完成加载通知
+    task.wait(1)
+    game:GetService("StarterGui"):SetCore("SendNotification",{
+        Title = "妲己吧Doors",
+        Text = "加载完成！",
+        Icon = "rbxassetid://119970903874014",
+        Duration = 3
+    })
+
+    WindUI:Notify({
+        Title = "Doors脚本加载完成",
+        Content = "所有功能已就绪",
+        Icon = "check",
+        Duration = 3
+    })
+
+else
+    game:GetService("StarterGui"):SetCore("SendNotification",{
+        Title = "错误",
+        Text = "此脚本仅支持Doors游戏！",
+        Icon = "rbxassetid://119970903874014",
+        Duration = 5
+    })
+end
