@@ -182,6 +182,10 @@ about:Button("飞行",function() --（单点类）
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HoshinoAi1813/djbscript/refs/heads/main/FlyGuiV3'))()
 end)
 
+about:Button("载具飞行",function() --（单点类）
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HoshinoAi1813/djbscript/refs/heads/main/vfly'))()
+end)
+
 about:Button("蜘蛛侠（开启后无法关闭）",function() --（单点类）
     loadstring(game:HttpGet("https://pastebin.com/raw/zXk4Rq2r"))()
 end)
