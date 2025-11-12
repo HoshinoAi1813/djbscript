@@ -16,6 +16,7 @@ local UITab2 = win:Tab("『通用』",'7734068321')
 local UITab3 = win:Tab("『其它脚本』",'7734068321')
 local UITab4 = win:Tab("『玩家』",'7734068321')
 local UITab5 = win:Tab("『甩飞|黑洞』",'7734068321')
+local UITab6 = win:Tab("『妲己吧脚本分支』",'7734068321')
 
 local about = UITab1:section("『公告』",true)
 
@@ -31,8 +32,8 @@ local about = UITab1:section("『脚本信息』",true)
 
 about:Label("妲己吧v0.3.1")
 about:Label("这是缝合")
-about:Label("更新内容：新增穿墙和透视！")
-about:Label("deepseekNB")
+about:Label("更新内容：新增穿墙和透视等")
+about:Label("dickNB")
 
 local about = UITab2:section("『实用』",true)  -- 分类内功能分类
 about:Toggle("无限跳","Toggle",false,function(Value)
@@ -251,6 +252,11 @@ about:Button("黑洞英文",function()
     loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-BLACK-HOLE-30646"))()
 end)
 
+local about = UITab6:section("『妲己吧分支』",true)
+about:Button("doors",function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HoshinoAi1813/djbscript/refs/heads/main/doors'))()
+end)
+		
 -- 反挂机
 local vu = game:GetService("VirtualUser")
 game:GetService("Players").LocalPlayer.Idled:connect(function()
