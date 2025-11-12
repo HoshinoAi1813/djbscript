@@ -182,6 +182,10 @@ about:Button("飞行",function() --（单点类）
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HoshinoAi1813/djbscript/refs/heads/main/FlyGuiV3'))()
 end)
 
+about:Button("r15无敌少侠飞行",function() --（单点类）
+loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invinicible-Flight-R15-45414"))()		
+end)	
+
 about:Button("载具飞行",function() --（单点类）
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HoshinoAi1813/djbscript/refs/heads/main/vfly'))()
 end)
