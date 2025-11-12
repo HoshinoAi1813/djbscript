@@ -31,7 +31,7 @@ if game.GameId == 2440500124 then
 
     -- 创建主窗口
     local Window = WindUI:CreateWindow({
-        Title = ((isHotel and "妲己吧 | 酒店") or (isMines and "Rb脚本中心 | 矿井") or (isBackdoor and "Rb脚本中心 | 后门") or "Rb脚本中心 | Doors"),
+        Title = ((isHotel and "妲己吧 | 酒店") or (isMines and "妲己吧 | 矿井") or (isBackdoor and "妲己吧 | 后门") or "妲己吧 | Doors"),
         Icon = "rbxassetid://105933835532108",
         Author = "妲己吧Doors",
         Folder = "妲己吧脚本",
@@ -60,6 +60,7 @@ if game.GameId == 2440500124 then
 
     -- 创建标签页
     local Tabs = {
+        Notice = window:Section({ Title = "公告", Opened = true })
         Player = Window:Section({ Title = "玩家功能", Opened = true }),
         Visual = Window:Section({ Title = "视觉功能", Opened = true }),
         Auto = Window:Section({ Title = "自动功能", Opened = true }),
@@ -68,12 +69,17 @@ if game.GameId == 2440500124 then
     }
 
     local TabHandles = {
+        NoticeTab = Tabs.Notice:Tab({ Title = "这是偷RB的awa", Icon = "text"}),
         PlayerTab = Tabs.Player:Tab({ Title = "玩家设置", Icon = "user" }),
         VisualTab = Tabs.Visual:Tab({ Title = "视觉增强", Icon = "eye" }),
         AutoTab = Tabs.Auto:Tab({ Title = "自动互动", Icon = "zap" }),
         ProtectionTab = Tabs.Protection:Tab({ Title = "实体防护", Icon = "shield" }),
         ESPTab = Tabs.ESP:Tab({ Title = "物品透视", Icon = "layout-grid" })
     }
+
+    TabHandles.NoticeTab:Toggle({
+        Title = "这是我做的史",
+        Desc = "建议用XA的awa",
 
     -- 玩家功能
     local speedValue = 16
