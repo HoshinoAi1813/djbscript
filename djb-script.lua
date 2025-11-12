@@ -196,6 +196,7 @@ about:Button("皮脚本",function() --（单点类）
     loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/QQ1002100032-Roblox-Pi-script.lua"))()
 end)
 
+local about = UITab4:section("『透视』",true)
 -- 简化版通用透视
 about:Toggle("玩家透视","Toggle",false,function(Value)
     if Value then
