@@ -1,20 +1,20 @@
-local main = instance . new(" screen GUI ")
-local Frame = Instance.new("Frame ")
-local up = instance . new(" text button ")
-local down = instance . new(" text button ")
-local ofo = instance . new(" text button ")
-local text label = instance . new(" text label ")
-local plus = instance . new(" text button ")
-本地速度= Instance.new("TextLabel ")
-local mine = instance . new(" text button ")
-local close button = instance . new(" text button ")
-local mini = instance . new(" text button ")
-local mini 2 = instance . new(" text button ")
+local main = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local up = Instance.new("TextButton")
+local down = Instance.new("TextButton")
+local onof = Instance.new("TextButton")
+local TextLabel = Instance.new("TextLabel")
+local plus = Instance.new("TextButton")
+local speed = Instance.new("TextLabel")
+local mine = Instance.new("TextButton")
+local closebutton = Instance.new("TextButton")
+local mini = Instance.new("TextButton")
+local mini2 = Instance.new("TextButton")
 
-主要的。Name = "main "
-主要的。家长=游戏。players . local player:WaitForChild(" player GUI ")
-主要的。ZIndexBehavior = Enum。ZIndexBehavior .同胞
-主要的。ResetOnSpawn = false
+main.Name = "main"
+main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+main.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+main.ResetOnSpawn = false
 
 Frame.Parent = main
 Frame.BackgroundColor3 = Color3.fromRGB(163, 255, 137)
